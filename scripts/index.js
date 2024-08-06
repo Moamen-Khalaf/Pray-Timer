@@ -123,8 +123,9 @@ function saveChanges() {
 }
 (async () => {
   try {
-    if (localStorage.getItem("searchQuery")) {
-      await getTime(JSON.parse(localStorage.getItem("searchQuery")));
+    const searchQuery = JSON.parse(localStorage.getItem("searchQuery"));
+    if (searchQuery) {
+      await getTime(searchQuery);
     }
     const allCountries = (await fetchURL(URLS.countries)).data;
     const allMethods = (await fetchURL(URLS.methods)).data;
@@ -135,6 +136,22 @@ function saveChanges() {
 
     loadCountries(cities);
     loadMethods(allMethods);
+    if (searchQuery) {
+      const { method, country, city } = searchQuery;
+      document.getElementById("method").value = method;
+      document.getElementById("country").value = country;
+
+      // Populate the city dropdown after setting the country
+      const citiesHolder = document.getElementById("city");
+      cities.get(country).forEach((cityName) => {
+        const opt = document.createElement("option");
+        opt.value = cityName;
+        opt.innerText = cityName;
+        citiesHolder.appendChild(opt);
+      });
+
+      document.getElementById("city").value = city;
+    }
     saveChanges();
   } catch (error) {
     console.log(error);
