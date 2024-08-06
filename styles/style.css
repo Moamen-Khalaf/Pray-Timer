@@ -1,0 +1,125 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  --m-color: #0a0c11;
+  --t-color: #b6b7b8;
+  --t-sec-color: #b2ff59;
+}
+body {
+  background-color: #181e29;
+}
+.prays-holder {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+  background-color: var(--m-color);
+  padding: 1rem 0.5rem;
+  max-width: fit-content;
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  > div {
+    --time-rem: 50%;
+    width: 100px;
+    color: var(--t-color);
+    position: relative;
+    padding: 0.2rem 0;
+    overflow: hidden;
+    margin: 0 0.5rem;
+
+    .time-holder,
+    .remaining {
+      transition-duration: 0.4s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+    }
+    .remaining {
+      transform: translateY(-150%);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      > span {
+        color: var(--t-sec-color);
+      }
+    }
+    .time-holder {
+      transform: translateY(0%);
+      > span:first-of-type {
+        text-transform: capitalize;
+      }
+      margin-bottom: 0.4rem;
+    }
+    span {
+      font-size: large;
+      font-weight: bold;
+      display: block;
+    }
+  }
+  > div:is([active]):hover {
+    .remaining {
+      transform: translateY(0%);
+    }
+    .time-holder {
+      transform: translateY(150%);
+    }
+  }
+  > div:not(:first-child):is([active]):after {
+    content: "";
+    position: absolute;
+    border-radius: 10px;
+    bottom: 0;
+    left: 0;
+    height: 0.25rem;
+    width: 100%;
+    background-color: #fff;
+    background: rgb(0, 212, 255);
+    background: linear-gradient(
+      90deg,
+      var(--t-sec-color) var(--time-rem),
+      rgba(9, 9, 121, 1) 9%,
+      rgba(2, 0, 36, 1) 100%
+    );
+  }
+}
+.settings-btn:hover,
+.settings-btn:active,
+.settings-btn:focus {
+  border: none;
+  scale: 1;
+  background-color: transparent;
+}
+.settings-btn {
+  border: none;
+  font-size: 1.5rem;
+  position: fixed;
+  bottom: 0;
+  i,
+  svg {
+    color: #fff;
+  }
+}
+.modal-content {
+  background-color: #333333ad;
+  color: #fff;
+}
+.modal-body div {
+  display: flex;
+  justify-content: space-between;
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  .form-select {
+    flex-basis: 50%;
+  }
+}
