@@ -14,10 +14,12 @@ async function fetchURL(url, configration = {}) {
   return await response.json();
 }
 function get12TIme(time) {
+  time =
+    time.split(":")[0] > 12
+      ? `${time.split(":")[0] - 12}:${time.split(":")[1]}`
+      : time;
   return `${
-    time.split(":")[0] - 12 >= 10
-      ? time.split(":")[0] - 12
-      : `0${time.split(":")[0] - 12}`
+    time.split(":")[0] >= 10 ? time.split(":")[0] : `0${time.split(":")[0]}`
   }:${time.split(":")[1]} PM`;
 }
 function updateTime(timings) {
