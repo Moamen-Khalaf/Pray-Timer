@@ -28,7 +28,7 @@ body {
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   > div {
-    --time-rem: 50%;
+    --time-rem: 100%;
     width: 100px;
     color: var(--t-color);
     position: relative;
