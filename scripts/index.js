@@ -189,12 +189,24 @@ function saveChanges() {
 }
 (async () => {
   try {
+    console.time("Measure");
     const searchQuery = JSON.parse(localStorage.getItem("searchQuery"));
+    let allCountries, allMethods;
     if (searchQuery) {
-      await getTime(searchQuery);
+      [allCountries, allMethods] = await Promise.all([
+        fetchURL(URLS.countries),
+        fetchURL(URLS.methods),
+        getTime(searchQuery),
+      ]);
+    } else {
+      [allCountries, allMethods] = await Promise.all([
+        fetchURL(URLS.countries),
+        fetchURL(URLS.methods),
+      ]);
     }
-    const allCountries = (await fetchURL(URLS.countries)).data;
-    const allMethods = (await fetchURL(URLS.methods)).data;
+
+    allCountries = allCountries.data;
+    allMethods = allMethods.data;
     const cities = new Map();
     allCountries.forEach((element) => {
       cities.set(element.country, element.cities);
@@ -219,6 +231,7 @@ function saveChanges() {
       document.getElementById("city").value = city;
     }
     saveChanges();
+    console.timeEnd("Measure");
   } catch (error) {
     console.log(error);
   }
