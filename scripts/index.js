@@ -3,8 +3,8 @@ const URLS = {
   methods: "https://api.aladhan.com/v1/methods",
   praysTime: new URL("http://api.aladhan.com/v1/timingsByCity"),
 };
-async function fetchURL(url, configration = {}) {
-  const response = await fetch(url, configration);
+async function fetchURL(url) {
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error(
       `Http error with status code ${response.status}
@@ -22,6 +22,69 @@ function get12TIme(time) {
     time.split(":")[0] >= 10 ? time.split(":")[0] : `0${time.split(":")[0]}`
   }:${time.split(":")[1]} PM`;
 }
+function createDateWithTime(timeStr) {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+
+  const now = new Date();
+
+  now.setHours(hours);
+  now.setMinutes(minutes);
+  now.setSeconds(0);
+  now.setMilliseconds(0);
+  return now;
+}
+function getRemainingTime(th1, tm1, th2, tm2) {
+  return `${
+    Math.abs(th1 - th2) >= 10 ? Math.abs(th1 - th2) : "0" + Math.abs(th1 - th2)
+  }:${
+    Math.abs(tm1 - tm2) >= 10 ? Math.abs(tm1 - tm2) : "0" + Math.abs(tm1 - tm2)
+  }`;
+}
+function updateRemainingTime(timingsArr, timeArr) {
+  const now = new Date();
+  for (let index = 0; index < 6; index++) {
+    const timingElement = timingsArr[index];
+    const prayerTime = timeArr[index];
+
+    timingElement.removeAttribute("active");
+
+    const remainingTime = getRemainingTime(
+      now.getHours(),
+      now.getMinutes(),
+      prayerTime.getHours(),
+      prayerTime.getMinutes()
+    );
+
+    timingElement.querySelector(".rem-time").innerText = remainingTime;
+
+    if (prayerTime.getTime() > now.getTime()) {
+      timingElement.setAttribute("active", "true");
+    }
+  }
+}
+function updateRemaining(timings) {
+  const timingsArr = [
+    document.querySelector(`[data-name="fajr"]`),
+    document.querySelector(`[data-name="sunrise"]`),
+    document.querySelector(`[data-name="duhur"]`),
+    document.querySelector(`[data-name="asr"]`),
+    document.querySelector(`[data-name="maghrib"]`),
+    document.querySelector(`[data-name="isha"]`),
+  ];
+
+  const timeArr = [
+    createDateWithTime(timings.Fajr),
+    createDateWithTime(timings.Sunrise),
+    createDateWithTime(timings.Dhuhr),
+    createDateWithTime(timings.Asr),
+    createDateWithTime(timings.Maghrib),
+    createDateWithTime(timings.Isha),
+  ];
+  updateRemainingTime(timingsArr, timeArr);
+  setInterval(() => {
+    updateRemainingTime(timingsArr, timeArr);
+  }, 1000 * 60);
+}
 function updateTime(timings) {
   if (timings) {
     const fajrTime = document.querySelector(`[data-name="fajr"] .time`);
@@ -37,6 +100,7 @@ function updateTime(timings) {
     asrTime.innerText = get12TIme(timings.Asr);
     maghribTime.innerText = get12TIme(timings.Maghrib);
     ishaTime.innerText = get12TIme(timings.Isha);
+    updateRemaining(timings);
   }
 }
 async function getTime(values) {
@@ -58,6 +122,7 @@ function loadCountries(cities) {
   });
   optiHolder.addEventListener("change", (e) => {
     const citiesHolder = document.getElementById("city");
+    citiesHolder.innerHTML = `<option selected disabled value="0">Open this select menu</option>`;
     for (const citiy of cities.get(e.target.value)) {
       const opt = document.createElement("option");
       opt.value = citiy;
