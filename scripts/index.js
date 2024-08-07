@@ -59,6 +59,7 @@ function updateRemainingTime(timingsArr, timeArr) {
 
     if (prayerTime.getTime() > now.getTime()) {
       timingElement.setAttribute("active", "true");
+      break;
     }
   }
 }
