@@ -1,7 +1,7 @@
 const URLS = {
   countries: "https://countriesnow.space/api/v0.1/countries",
   methods: "https://api.aladhan.com/v1/methods",
-  praysTime: new URL("http://api.aladhan.com/v1/timingsByCity"),
+  praysTime: new URL("https://api.aladhan.com/v1/timingsByCity"),
 };
 async function fetchURL(url) {
   const response = await fetch(url);
