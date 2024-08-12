@@ -110,6 +110,13 @@ async function getTime(values) {
       URLS.praysTime.searchParams.set(value[0], value[1]);
     });
     const timeValues = await fetchURL(URLS.praysTime);
+    localStorage.setItem(
+      "data",
+      JSON.stringify({
+        date: timeValues.data.date.gregorian.date,
+        timings: timeValues.data.timings,
+      })
+    );
     updateTime(timeValues.data.timings);
   }
 }
@@ -187,12 +194,28 @@ function saveChanges() {
     }
   };
 }
+function formatDate() {
+  const date = new Date();
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  // Format the date as "DD-MM-YYYY"
+  return `${day}-${month}-${year}`;
+}
 (async () => {
   try {
     console.time("Measure");
+    const data = JSON.parse(localStorage.getItem("data"));
     const searchQuery = JSON.parse(localStorage.getItem("searchQuery"));
     let allCountries, allMethods;
-    if (searchQuery) {
+    if (data && formatDate() === data.date) {
+      updateTime(data.timings);
+      [allCountries, allMethods] = await Promise.all([
+        fetchURL(URLS.countries),
+        fetchURL(URLS.methods),
+      ]);
+    } else if (searchQuery) {
       [allCountries, allMethods] = await Promise.all([
         fetchURL(URLS.countries),
         fetchURL(URLS.methods),
